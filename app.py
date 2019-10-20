@@ -80,9 +80,33 @@ def heapMapLatLon():
     folium_map.save('static/map.html')
     return render_template('mapa.html', current_time=int(time.time()), latitude=latitude, longitude=longitude, date=dateRequest)
 
+
+@app.route('/heapmapwithtime', methods=['GET', 'POST'])
+def heapMapTime():
+    #Create the map
+    start_coords = (-34.60, -58.42)
+    folium_map = folium.Map(location=start_coords, zoom_start=13)
+
+    # Seleccionamos solo las columnas de coordenadas validas para la fecha seleccionada
+    df = initDataFrame()
+    # Seleccionamos solo las columnas de coordenadas validas para la fecha seleccionada
+    df = df[(df['latitud'] != 0) & (df['longitud'] != 0) & (df['anho'] == 2018) & (df['mes'] <= 3) & (df['solo_hora'] != 99)]
+
+    #Creamos la lista de 24 horas
+    df_hour_list = []
+    for hour in df.solo_hora.sort_values().unique():
+        df_hour_list.append(df.loc[df.solo_hora == hour, ['latitud', 'longitud', 'count']].groupby(['latitud', 'longitud']).sum().reset_index().values.tolist())
+
+    #Creamos y agregamos el heatmap por horas
+    HeatMapWithTime(df_hour_list, radius=9, gradient={0.2: 'blue', 0.4: 'lime', 0.6: 'orange', 1: 'red'}, min_opacity=0.1, max_opacity=0.8, use_local_extrema=True).add_to(folium_map)
+
+    #Save in html
+    folium_map.save('static/mapWithTime.html')
+    return render_template('mapa2.html', current_time=int(time.time()))
+
 def initDataFrame():
     global df
-    df = pd.read_csv('delitos.csv')
+    df = pd.read_csv('datasets/delitos.csv')
 
     #Borramos las columnas sin datos
     df.drop(['lugar'], axis = 1, inplace=True)
