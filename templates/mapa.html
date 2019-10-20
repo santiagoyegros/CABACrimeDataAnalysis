@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %} Mapa de Calor de Crimenes de Buenos Aires {% endblock %}
+{% block head %} {{ super() }} {% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col">
+                <h2 class="text-center">Mapa de Calor de Crimenes de Buenos Aires</h2>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-2 mb-2">
+            <div class="card border-dark" style="width: 25rem;">
+                <div class="card-header">Coordenadas</div>
+                <div class="card-body text-dark pt-2 pb-0">
+                <form method="POST">
+                    <div class="form-group row">
+                        <label for="latitude" class="col-3 col-form-label">Latitud</label> 
+                        <div class="col-9">
+                            <input  id="latitude" value="{{ latitude if latitude != None }}" name="latitude" placeholder="-58.34" type="text" required="required" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="longitude" class="col-3 col-form-label">Longitud</label> 
+                        <div class="col-9">
+                            <input id="longitude" value="{{ longitude if longitude != None }}" name="longitude" placeholder="-34.34" type="text" required="required" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="date" class="col-3 col-form-label">Fecha</label> 
+                        <div class="col-9">
+                            <div class="input-group date" data-provide="datepicker">
+                                <input type="text" class="form-control form-control-sm" name="date" value="{{ date if date != None }}">
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-th"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="offset-3 col-9">
+                            <button name="submit" type="submit" class="btn btn-primary btn-sm">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe width="800" height="500" class="embed-responsive-item" src="{{ url_for('static', filename='map.html', _=current_time) }}"></iframe>
+            </div>
+        </div>
+            <script type="text/javascript">
+            $('.datepicker').datepicker({
+                format: 'mm/dd/yyyy',
+                startDate: '-3d'
+            });
+            </script>
+    </div>
+{% endblock %}
