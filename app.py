@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import folium
 import datetime
+import json
 from folium.plugins import HeatMap
 from folium.plugins import HeatMapWithTime
 
@@ -103,6 +104,40 @@ def heapMapTime():
     #Save in html
     folium_map.save('static/mapWithTime.html')
     return render_template('mapa2.html', current_time=int(time.time()))
+
+@app.route('/clusterKmeans', methods=['GET', 'POST'])
+def clustersKmeans():
+    #Cargamos los datos
+    geo_json_data = json.load(open('datasets/barrios.geojson'))
+    clusters = pd.read_csv('datasets/out_kmeans_CABA.csv')
+    clusters.rename( columns={'Unnamed: 0':'barrios'}, inplace=True )
+
+    #Correccion de nombre de barrios
+    clusters.at[clusters.index[clusters['barrios'] == 'VILLA GRAL MITRE'], 'barrios'] = 'VILLA GRAL. MITRE'
+    clusters.at[clusters.index[clusters['barrios'] == 'COGHLAND'], 'barrios'] = 'COGHLAN'
+    clusters.at[clusters.index[clusters['barrios'] == 'MONTSERRAT'], 'barrios'] = 'MONSERRAT'
+    clusters.at[clusters.index[clusters['barrios'] == 'LA BOCA'], 'barrios'] = 'BOCA'
+    clusters.at[clusters.index[clusters['barrios'] == 'NUÑEZ'], 'barrios'] = 'NUÃ‘EZ'
+
+    #Creamos el mapa de CABA
+    m = folium.Map(location=[-34.60, -58.42], zoom_start = 12)
+
+    #Agregamos el Choropleth
+    folium.Choropleth(
+        geo_data=geo_json_data,
+        data=clusters,
+        columns=['barrios', 'cluster'],
+        key_on='feature.properties.barrio',
+        fill_color='RdYlBu',
+        fill_opacity=0.6,
+        line_opacity=0.2,
+        legend_name='Clusters kmeans',
+        highlight=True
+    ).add_to(m)
+
+    #Save in html
+    m.save('static/mapKmean.html')
+    return render_template('mapa3.html', current_time=int(time.time()))
 
 def initDataFrame():
     global df

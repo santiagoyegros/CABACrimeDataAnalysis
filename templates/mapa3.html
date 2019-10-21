@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block title %} Mapa de Calor de Crimenes de Buenos Aires {% endblock %}
+{% block head %} {{ super() }} {% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col">
+                <h2 class="text-center">Mapa de Clusters - K-Means</h2>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe width="800" height="500" class="embed-responsive-item" src="{{ url_for('static', filename='mapKmean.html', _=current_time) }}"></iframe>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <h2>Conclusiones</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1" style="color:#d73027;">Cluster 1 - Rojo </h5>
+                    <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">Agrupa a los barrios en los cuales la tasa de criminalidad es mucho menor en relación a los demás barrios, sin embargo, puede notar que también se encuentran entre los barrios menos poblados.</p>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1" style="color:#fee090;">Cluster 2 - Amarillo</h5>
+                    <small class="text-muted">3 days ago</small>
+                    </div>
+                    <p class="mb-1">En el se encuentran los barrios con mayor indice de criminalidad en 4 de los 7 tipos de delitos y también son de los más populosos.</p>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1" style="color:#91bfdb;">Cluster 3 - Celeste</h5>
+                    <small class="text-muted">3 days ago</small>
+                    </div>
+                    <p class="mb-1">Se destacan por ser los barrios más populosos y en los cuales existe la mayor cantidad de robo_con_violencia y lesiones_seg_vial, lo cual también se puede apreciar en la matriz de correlación donde ambas variables son las más relacionadas.</p>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1" style="color:#4575b4;">Cluster 4 - Azul</h5>
+                    <small class="text-muted">3 days ago</small>
+                    </div>
+                    <p class="mb-1">Es un grupo similar al cluster 1 pero donde se nota un mayor indice un poco mayor de población en comparación al cluster 1.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
