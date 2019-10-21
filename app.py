@@ -52,6 +52,7 @@ def heapMapLatLon():
     marker = None
     latitude = None
     longitude = None
+    dateRequest = None
 
     if request.method == 'POST':
         latitude = request.form.get('latitude')
@@ -66,20 +67,25 @@ def heapMapLatLon():
     folium_map = folium.Map(location=start_coords, zoom_start=13)
     folium_map.add_child(folium.LatLngPopup())
 
-    # Seleccionamos solo las columnas de coordenadas validas para la fecha seleccionada
-    df = initDataFrame()
-    df_selected = df[(df['latitud'] != 0) & (df['longitud'] != 0) & (df['fecha_for'] == dateUse)  ]
+    if(dateRequest is not None):
+        # Seleccionamos solo las columnas de coordenadas validas para la fecha seleccionada
+        df = initDataFrame()
+        df_selected = df[(df['latitud'] != 0) & (df['longitud'] != 0) & (df['fecha_for'] == dateUse)  ]
 
-    #Create de HeatMap
-    HeatMap(data=df_selected[['latitud', 'longitud', 'count']].groupby(['latitud', 'longitud']).sum().reset_index().values.tolist(), radius=8, max_zoom=13).add_to(folium_map)
+        #Create de HeatMap
+        HeatMap(data=df_selected[['latitud', 'longitud', 'count']].groupby(['latitud', 'longitud']).sum().reset_index().values.tolist(), radius=8, max_zoom=13).add_to(folium_map)
 
-    #Add marker
-    if marker is not None:
-        folium_map.add_child(marker)
+        #Add marker
+        if marker is not None:
+            folium_map.add_child(marker)
 
-    #Save in html
-    folium_map.save('static/map.html')
-    return render_template('mapa.html', current_time=int(time.time()), latitude=latitude, longitude=longitude, date=dateRequest)
+        #Save in html
+        folium_map.save('static/map.html')
+        return render_template('mapa.html', current_time=int(time.time()), latitude=latitude, longitude=longitude, date=dateRequest)
+    else:
+        #Save in html
+        folium_map.save('static/map.html')
+        return render_template('mapa.html', current_time=int(time.time()), latitude=latitude, longitude=longitude, date=dateRequest)
 
 
 @app.route('/heapmapwithtime', methods=['GET', 'POST'])
